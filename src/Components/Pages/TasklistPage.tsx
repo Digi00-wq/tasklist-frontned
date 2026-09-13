@@ -144,6 +144,42 @@ export const TasklistPage: React.FC = () => {
     }
   };
 
+  const handleEditProject = async (projId: number, name: string, color: string) => {
+    setProjects((prev) =>
+      prev.map((p) => (p.id === projId ? { ...p, name, color } : p))
+    );
+
+    if (isBackendConnected) {
+      try {
+        await TaskService().updateProject(projId, { name, color });
+      } catch (err) {
+        console.error("Fehler beim Bearbeiten des Projekts:", err);
+      }
+    }
+  };
+
+  const handleDeleteProject = async (projId: number) => {
+    if (projects.length <= 1) {
+      alert("Es muss mindestens 1 Projekt existieren.");
+      return;
+    }
+
+    const nextProjects = projects.filter((p) => p.id !== projId);
+    setProjects(nextProjects);
+
+    if (activeProjectId === projId) {
+      setActiveProjectId(nextProjects[0]?.id || null);
+    }
+
+    if (isBackendConnected) {
+      try {
+        await TaskService().deleteProject(projId);
+      } catch (err) {
+        console.error("Fehler beim Löschen des Projekts:", err);
+      }
+    }
+  };
+
   // Task Actions
   const handleToggleTaskComplete = async (task: Task) => {
     const newCompleted = !task.completed;
@@ -473,6 +509,8 @@ export const TasklistPage: React.FC = () => {
         }}
         onOpenGlobalSearch={() => setActiveView("global-search")}
         onAddProject={handleAddProject}
+        onEditProject={handleEditProject}
+        onDeleteProject={handleDeleteProject}
         tasksCountMap={tasksCountMap}
       />
 

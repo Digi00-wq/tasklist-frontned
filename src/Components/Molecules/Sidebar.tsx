@@ -1,9 +1,24 @@
 import React, { useState } from "react";
-import { Box, Typography, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import TagIcon from "@mui/icons-material/Tag";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import type { Project } from "../../service/TaskService";
 
 interface SidebarProps {
@@ -13,6 +28,8 @@ interface SidebarProps {
   onOpenCreateTask: () => void;
   onOpenGlobalSearch: () => void;
   onAddProject: (name: string, color: string) => void;
+  onEditProject?: (projId: number, name: string, color: string) => void;
+  onDeleteProject?: (projId: number) => void;
   tasksCountMap: Record<number, number>;
 }
 
@@ -32,11 +49,48 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenCreateTask,
   onOpenGlobalSearch,
   onAddProject,
+  onEditProject,
+  onDeleteProject,
   tasksCountMap,
 }) => {
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [newProjectColor, setNewProjectColor] = useState("#e44232");
+
+  // Project Menu State
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedProjectForMenu, setSelectedProjectForMenu] = useState<Project | null>(null);
+
+  // Edit Project Modal State
+  const [isEditProjectOpen, setIsEditProjectOpen] = useState(false);
+  const [editProjectName, setEditProjectName] = useState("");
+  const [editProjectColor, setEditProjectColor] = useState("#e44232");
+
+  const handleOpenMenu = (e: React.MouseEvent<HTMLButtonElement>, proj: Project) => {
+    e.stopPropagation();
+    setMenuAnchorEl(e.currentTarget);
+    setSelectedProjectForMenu(proj);
+  };
+
+  const handleCloseMenu = () => {
+    setMenuAnchorEl(null);
+  };
+
+  const handleOpenEdit = () => {
+    if (selectedProjectForMenu) {
+      setEditProjectName(selectedProjectForMenu.name);
+      setEditProjectColor(selectedProjectForMenu.color || "#e44232");
+      setIsEditProjectOpen(true);
+    }
+    handleCloseMenu();
+  };
+
+  const handleDelete = () => {
+    if (selectedProjectForMenu && onDeleteProject) {
+      onDeleteProject(selectedProjectForMenu.id);
+    }
+    handleCloseMenu();
+  };
 
   const handleCreateProjectSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +98,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
     onAddProject(newProjectName.trim(), newProjectColor);
     setNewProjectName("");
     setIsAddProjectOpen(false);
+  };
+
+  const handleEditProjectSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editProjectName.trim() || !selectedProjectForMenu || !onEditProject) return;
+    onEditProject(selectedProjectForMenu.id, editProjectName.trim(), editProjectColor);
+    setIsEditProjectOpen(false);
+    setSelectedProjectForMenu(null);
   };
 
   return (
@@ -144,36 +206,105 @@ export const Sidebar: React.FC<SidebarProps> = ({
               const color = proj.color || "#e44232";
 
               return (
-                <Button
+                <Box
                   key={proj.id}
-                  fullWidth
-                  onClick={() => onSelectProject(proj.id)}
                   sx={{
+                    display: "flex",
+                    alignItems: "center",
                     justifyContent: "space-between",
-                    textTransform: "none",
-                    color: isSelected ? "#ffffff" : "#d0d0d0",
-                    backgroundColor: isSelected ? "rgba(255, 255, 255, 0.08)" : "transparent",
                     borderRadius: "6px",
-                    px: 1.5,
-                    py: 0.8,
-                    fontSize: "0.875rem",
-                    fontWeight: isSelected ? 600 : 400,
-                    "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.08)", color: "#ffffff" },
+                    px: 1.2,
+                    py: 0.4,
+                    backgroundColor: isSelected ? "rgba(255, 255, 255, 0.08)" : "transparent",
+                    transition: "background-color 0.15s ease",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.08)",
+                      "& .proj-menu-btn": { opacity: 1 },
+                    },
                   }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <TagIcon sx={{ color, fontSize: 16 }} />
-                    <span>{proj.name}</span>
+                  {/* Clickable project label */}
+                  <Box
+                    onClick={() => onSelectProject(proj.id)}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      flexGrow: 1,
+                      minWidth: 0,
+                      cursor: "pointer",
+                      py: 0.4,
+                    }}
+                  >
+                    <TagIcon sx={{ color, fontSize: 16, flexShrink: 0 }} />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: isSelected ? "#ffffff" : "#d0d0d0",
+                        fontWeight: isSelected ? 600 : 400,
+                        fontSize: "0.875rem",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {proj.name}
+                    </Typography>
                   </Box>
-                  <Typography variant="caption" sx={{ color: "#888888" }}>
-                    {count}
-                  </Typography>
-                </Button>
+
+                  {/* Right count & 3-dot menu */}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flexShrink: 0 }}>
+                    <Typography variant="caption" sx={{ color: "#888888", fontSize: "0.75rem" }}>
+                      {count}
+                    </Typography>
+                    <IconButton
+                      className="proj-menu-btn"
+                      size="small"
+                      onClick={(e) => handleOpenMenu(e, proj)}
+                      sx={{
+                        color: "#888888",
+                        p: 0.2,
+                        opacity: 0,
+                        transition: "opacity 0.15s ease",
+                        "&:hover": { color: "#ffffff" },
+                      }}
+                    >
+                      <MoreHorizIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
+                  </Box>
+                </Box>
               );
             })}
           </Box>
         </Box>
       </Box>
+
+      {/* Project Options Menu */}
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={Boolean(menuAnchorEl)}
+        onClose={handleCloseMenu}
+        slotProps={{
+          paper: {
+            sx: {
+              backgroundColor: "#262626",
+              color: "#ffffff",
+              border: "1px solid #333333",
+              borderRadius: "8px",
+              minWidth: 150,
+            },
+          },
+        }}
+      >
+        <MenuItem onClick={handleOpenEdit} sx={{ fontSize: "0.85rem", gap: 1 }}>
+          <EditIcon fontSize="small" sx={{ color: "#888888" }} />
+          Projekt bearbeiten
+        </MenuItem>
+        <MenuItem onClick={handleDelete} sx={{ fontSize: "0.85rem", color: "#ef4444", gap: 1 }}>
+          <DeleteIcon fontSize="small" sx={{ color: "#ef4444" }} />
+          Projekt löschen
+        </MenuItem>
+      </Menu>
 
       {/* Add Project Modal */}
       <Dialog
@@ -252,6 +383,88 @@ export const Sidebar: React.FC<SidebarProps> = ({
               }}
             >
               Add Project
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+
+      {/* Edit Project Modal */}
+      <Dialog
+        open={isEditProjectOpen}
+        onClose={() => setIsEditProjectOpen(false)}
+        fullWidth
+        maxWidth="xs"
+        slotProps={{
+          paper: {
+            sx: {
+              backgroundColor: "#1c1c1c",
+              color: "#ffffff",
+              borderRadius: "14px",
+              border: "1px solid #333333",
+            },
+          },
+        }}
+      >
+        <form onSubmit={handleEditProjectSubmit}>
+          <DialogTitle sx={{ fontWeight: 700 }}>Projekt bearbeiten</DialogTitle>
+          <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
+            <TextField
+              autoFocus
+              placeholder="Projektname"
+              value={editProjectName}
+              onChange={(e) => setEditProjectName(e.target.value)}
+              fullWidth
+              required
+              variant="outlined"
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  color: "#ffffff",
+                  backgroundColor: "#161616",
+                  borderRadius: "8px",
+                  "& fieldset": { borderColor: "#333333" },
+                },
+              }}
+            />
+
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Typography variant="caption" sx={{ color: "#888888" }}>
+                Farbe:
+              </Typography>
+              {PROJECT_COLOR_PRESETS.map((col) => (
+                <Box
+                  key={col}
+                  onClick={() => setEditProjectColor(col)}
+                  sx={{
+                    width: 22,
+                    height: 22,
+                    borderRadius: "50%",
+                    backgroundColor: col,
+                    cursor: "pointer",
+                    border: editProjectColor === col ? "2px solid #ffffff" : "2px solid transparent",
+                    transform: editProjectColor === col ? "scale(1.15)" : "scale(1)",
+                    transition: "all 0.15s ease",
+                  }}
+                />
+              ))}
+            </Box>
+          </DialogContent>
+          <DialogActions sx={{ p: 2 }}>
+            <Button onClick={() => setIsEditProjectOpen(false)} sx={{ color: "#888888", textTransform: "none" }}>
+              Abbrechen
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={!editProjectName.trim()}
+              sx={{
+                backgroundColor: "#e44232",
+                color: "#ffffff",
+                fontWeight: 600,
+                textTransform: "none",
+                "&:hover": { backgroundColor: "#d1453b" },
+              }}
+            >
+              Speichern
             </Button>
           </DialogActions>
         </form>
