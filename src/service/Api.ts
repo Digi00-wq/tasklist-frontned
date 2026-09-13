@@ -5,17 +5,34 @@ import type {
 } from "axios";
 import axios from "axios";
 
-const BASE_URL = "http://192.168.1.169:8080/api/";
+const DEFAULT_BASE_URL = "http://192.168.1.169:8080/api/";
+
+export const getBaseUrl = (): string => {
+  return localStorage.getItem("API_BASE_URL") || DEFAULT_BASE_URL;
+};
+
+export const setBaseUrl = (url: string) => {
+  let formattedUrl = url.trim();
+  if (formattedUrl && !formattedUrl.endsWith("/")) {
+    formattedUrl += "/";
+  }
+  localStorage.setItem("API_BASE_URL", formattedUrl);
+  TaskApi.defaults.baseURL = formattedUrl;
+};
 
 export const TaskApi: AxiosInstance = axios.create({
-  baseURL: BASE_URL,
-  timeout: 1000,
+  baseURL: getBaseUrl(),
+  timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 const security = false;
 
 TaskApi.interceptors.request.use(
   (config: InternalAxiosRequestConfig<any>) => {
+    config.baseURL = getBaseUrl();
     if (!security) {
       return config;
     }
@@ -27,7 +44,6 @@ TaskApi.interceptors.request.use(
     }
     return config;
   },
-
   (error: AxiosError) => {
     return Promise.reject(error);
   },
