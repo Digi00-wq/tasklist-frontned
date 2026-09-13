@@ -137,9 +137,9 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
       </Box>
 
       {/* Main Grid Content Layout */}
-      <Box sx={{ display: "flex", flexGrow: 1, minHeight: 460 }}>
-        {/* Left Content Column (70%) */}
-        <Box sx={{ flexGrow: 1, p: 3, display: "flex", flexDirection: "column", gap: 2.5 }}>
+      <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, flexGrow: 1, minHeight: 460 }}>
+        {/* Left Content Column */}
+        <Box sx={{ flexGrow: 1, p: { xs: 2, sm: 3 }, display: "flex", flexDirection: "column", gap: 2.5 }}>
           {/* Title Row */}
           <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
             <Box
@@ -177,7 +177,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
           </Box>
 
           {/* Description Section */}
-          <Box sx={{ pl: 4.5 }}>
+          <Box sx={{ pl: { xs: 0, sm: 4.5 } }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#888888", mb: 1 }}>
               <SubjectIcon fontSize="small" />
               <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>
@@ -208,7 +208,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
           </Box>
 
           {/* Sub-tasks Section */}
-          <Box sx={{ pl: 4.5 }}>
+          <Box sx={{ pl: { xs: 0, sm: 4.5 } }}>
             {subtasks.map((st, idx) => (
               <Typography key={idx} variant="body2" sx={{ color: "#d0d0d0", mb: 0.5 }}>
                 • {st}
@@ -240,8 +240,8 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
 
           <Divider sx={{ my: 1, borderColor: "#2e2e2e" }} />
 
-          {/* Comment Section matching fullscreen.png */}
-          <Box sx={{ pl: 4.5, mt: "auto" }}>
+          {/* Comment Section */}
+          <Box sx={{ pl: { xs: 0, sm: 4.5 }, mt: "auto" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
               <Avatar sx={{ width: 28, height: 28, backgroundColor: "#e44232", fontSize: "0.75rem" }}>
                 U
@@ -271,12 +271,13 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
           </Box>
         </Box>
 
-        {/* Right Details Panel (30%) matching fullscreen.png */}
+        {/* Right Details Panel */}
         <Box
           sx={{
-            width: 260,
-            minWidth: 260,
-            borderLeft: "1px solid #2e2e2e",
+            width: { xs: "100%", md: 260 },
+            minWidth: { xs: "100%", md: 260 },
+            borderLeft: { xs: "none", md: "1px solid #2e2e2e" },
+            borderTop: { xs: "1px solid #2e2e2e", md: "none" },
             p: 3,
             display: "flex",
             flexDirection: "column",

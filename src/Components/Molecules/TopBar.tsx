@@ -1,9 +1,10 @@
 import React from "react";
-import { Box, Typography, Button, TextField, InputAdornment } from "@mui/material";
+import { Box, Typography, Button, TextField, InputAdornment, IconButton } from "@mui/material";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 import SearchIcon from "@mui/icons-material/Search";
+import MenuIcon from "@mui/icons-material/Menu";
 
 interface TopBarProps {
   projectName: string;
@@ -12,6 +13,7 @@ interface TopBarProps {
   onSelectView: (view: "board" | "today" | "labels") => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  onOpenMobileMenu?: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
@@ -21,19 +23,30 @@ export const TopBar: React.FC<TopBarProps> = ({
   onSelectView,
   searchQuery,
   onSearchChange,
+  onOpenMobileMenu,
 }) => {
   return (
-    <Box sx={{ px: 5, pt: 3, pb: 2, borderBottom: "1px solid #282828", mb: 3 }}>
-      {/* Top Breadcrumb */}
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-        <Typography variant="body2" sx={{ color: "#888888", fontSize: "0.85rem" }}>
-          Projects / <span style={{ color: projectColor, fontWeight: 600 }}>{projectName}</span>
-        </Typography>
+    <Box sx={{ px: { xs: 2, sm: 4, md: 5 }, pt: { xs: 2, sm: 3 }, pb: 2, borderBottom: "1px solid #282828", mb: 3 }}>
+      {/* Top Breadcrumb & Mobile Menu Button */}
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1, gap: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          {onOpenMobileMenu && (
+            <IconButton
+              onClick={onOpenMobileMenu}
+              sx={{ color: "#ffffff", display: { xs: "inline-flex", md: "none" }, p: 0.5 }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Typography variant="body2" sx={{ color: "#888888", fontSize: "0.85rem" }}>
+            Projects / <span style={{ color: projectColor, fontWeight: 600 }}>{projectName}</span>
+          </Typography>
+        </Box>
 
         {/* Quick Search Bar */}
         <TextField
           size="small"
-          placeholder="Filter in project..."
+          placeholder="Filter..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           slotProps={{
@@ -46,7 +59,7 @@ export const TopBar: React.FC<TopBarProps> = ({
             },
           }}
           sx={{
-            width: 200,
+            width: { xs: 130, sm: 200 },
             "& .MuiOutlinedInput-root": {
               color: "#ffffff",
               backgroundColor: "#222222",
@@ -66,7 +79,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         sx={{
           fontWeight: 700,
           color: "#ffffff",
-          fontSize: "2rem",
+          fontSize: { xs: "1.4rem", sm: "1.8rem", md: "2rem" },
           letterSpacing: "-0.02em",
           mb: 2,
         }}
@@ -75,7 +88,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       </Typography>
 
       {/* Sub-Navigation Tabs inside the Project: Board | Today | Labels */}
-      <Box sx={{ display: "flex", gap: 1, borderBottom: "2px solid #262626", pb: 0.5 }}>
+      <Box sx={{ display: "flex", gap: 0.5, borderBottom: "2px solid #262626", pb: 0.5, overflowX: "auto" }}>
         <Button
           size="small"
           startIcon={<ViewColumnOutlinedIcon sx={{ fontSize: 18 }} />}
@@ -86,9 +99,10 @@ export const TopBar: React.FC<TopBarProps> = ({
             borderRadius: 0,
             textTransform: "none",
             fontWeight: activeView === "board" ? 700 : 500,
-            fontSize: "0.9rem",
-            px: 1.5,
+            fontSize: "0.875rem",
+            px: { xs: 1, sm: 1.5 },
             py: 0.5,
+            whiteSpace: "nowrap",
             "&:hover": { color: "#ffffff", backgroundColor: "transparent" },
           }}
         >
@@ -105,9 +119,10 @@ export const TopBar: React.FC<TopBarProps> = ({
             borderRadius: 0,
             textTransform: "none",
             fontWeight: activeView === "today" ? 700 : 500,
-            fontSize: "0.9rem",
-            px: 1.5,
+            fontSize: "0.875rem",
+            px: { xs: 1, sm: 1.5 },
             py: 0.5,
+            whiteSpace: "nowrap",
             "&:hover": { color: "#ffffff", backgroundColor: "transparent" },
           }}
         >
@@ -124,9 +139,10 @@ export const TopBar: React.FC<TopBarProps> = ({
             borderRadius: 0,
             textTransform: "none",
             fontWeight: activeView === "labels" ? 700 : 500,
-            fontSize: "0.9rem",
-            px: 1.5,
+            fontSize: "0.875rem",
+            px: { xs: 1, sm: 1.5 },
             py: 0.5,
+            whiteSpace: "nowrap",
             "&:hover": { color: "#ffffff", backgroundColor: "transparent" },
           }}
         >

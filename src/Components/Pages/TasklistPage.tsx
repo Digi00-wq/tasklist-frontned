@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { Box, CircularProgress, Alert, Button, Typography, Paper } from "@mui/material";
+import { Box, CircularProgress, Alert, Button, Typography, Paper, Drawer } from "@mui/material";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import Sidebar from "../Molecules/Sidebar";
@@ -36,7 +36,8 @@ export const TasklistPage: React.FC = () => {
   const [activeView, setActiveView] = useState<string>("board");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Modal States
+  // Modal & Mobile Navigation States
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [defaultStatusTabForNewTask, setDefaultStatusTabForNewTask] = useState<string | null>(null);
@@ -174,8 +175,9 @@ export const TasklistPage: React.FC = () => {
     if (isBackendConnected) {
       try {
         await TaskService().deleteProject(projId);
-      } catch (err) {
-        console.error("Fehler beim Löschen des Projekts:", err);
+      } catch (err: any) {
+        console.error("Fehler beim Löschen des Projekts im Backend:", err);
+        setError("Fehler 500 beim Löschen im Backend. Bitte starte die Java Spring Boot Anwendung auf dem Host (192.168.1.169) neu.");
       }
     }
   };
@@ -497,22 +499,71 @@ export const TasklistPage: React.FC = () => {
         overflow: "hidden",
       }}
     >
-      {/* Sidebar Navigation */}
-      <Sidebar
-        projects={projects}
-        activeProjectId={activeProject ? activeProject.id : 0}
-        onSelectProject={handleSelectProject}
-        onOpenCreateTask={() => {
-          setEditingTask(null);
-          setDefaultStatusTabForNewTask(null);
-          setIsTaskModalOpen(true);
+      {/* Desktop Sidebar Navigation */}
+      <Box sx={{ display: { xs: "none", md: "block" } }}>
+        <Sidebar
+          projects={projects}
+          activeProjectId={activeProject ? activeProject.id : 0}
+          onSelectProject={(id) => {
+            handleSelectProject(id);
+            setMobileOpen(false);
+          }}
+          onOpenCreateTask={() => {
+            setEditingTask(null);
+            setDefaultStatusTabForNewTask(null);
+            setIsTaskModalOpen(true);
+            setMobileOpen(false);
+          }}
+          onOpenGlobalSearch={() => {
+            setActiveView("global-search");
+            setMobileOpen(false);
+          }}
+          onAddProject={handleAddProject}
+          onEditProject={handleEditProject}
+          onDeleteProject={handleDeleteProject}
+          tasksCountMap={tasksCountMap}
+        />
+      </Box>
+
+      {/* Mobile Drawer Navigation */}
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: { xs: "block", md: "none" },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: 260,
+            backgroundColor: "#212121",
+            borderRight: "1px solid #2e2e2e",
+          },
         }}
-        onOpenGlobalSearch={() => setActiveView("global-search")}
-        onAddProject={handleAddProject}
-        onEditProject={handleEditProject}
-        onDeleteProject={handleDeleteProject}
-        tasksCountMap={tasksCountMap}
-      />
+      >
+        <Sidebar
+          projects={projects}
+          activeProjectId={activeProject ? activeProject.id : 0}
+          onSelectProject={(id) => {
+            handleSelectProject(id);
+            setMobileOpen(false);
+          }}
+          onOpenCreateTask={() => {
+            setEditingTask(null);
+            setDefaultStatusTabForNewTask(null);
+            setIsTaskModalOpen(true);
+            setMobileOpen(false);
+          }}
+          onOpenGlobalSearch={() => {
+            setActiveView("global-search");
+            setMobileOpen(false);
+          }}
+          onAddProject={handleAddProject}
+          onEditProject={handleEditProject}
+          onDeleteProject={handleDeleteProject}
+          tasksCountMap={tasksCountMap}
+        />
+      </Drawer>
 
       {/* Main View Area */}
       <Box
@@ -595,6 +646,7 @@ export const TasklistPage: React.FC = () => {
               onSelectView={(v) => setActiveView(v)}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              onOpenMobileMenu={() => setMobileOpen(true)}
             />
 
             {error && !isBackendConnected && (
@@ -634,12 +686,13 @@ export const TasklistPage: React.FC = () => {
               <Box
                 sx={{
                   flexGrow: 1,
-                  px: 5,
+                  px: { xs: 2, sm: 4, md: 5 },
                   pb: 4,
                   display: "flex",
-                  gap: 4,
+                  gap: { xs: 2, sm: 4 },
                   overflowX: "auto",
                   alignItems: "flex-start",
+                  scrollSnapType: { xs: "x mandatory", md: "none" },
                   "&::-webkit-scrollbar": { height: 6 },
                   "&::-webkit-scrollbar-thumb": { backgroundColor: "#333333", borderRadius: 3 },
                 }}

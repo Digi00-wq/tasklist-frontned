@@ -80,8 +80,9 @@ export const LabelColumn: React.FC<LabelColumnProps> = ({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       sx={{
-        width: 320,
-        minWidth: 300,
+        width: { xs: "82vw", sm: 320 },
+        minWidth: { xs: "82vw", sm: 300 },
+        scrollSnapAlign: "start",
         display: "flex",
         flexDirection: "column",
         maxHeight: "calc(100vh - 160px)",
