@@ -82,7 +82,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
           sx: {
             backgroundColor: "#1c1c1c",
             color: "#ffffff",
-            borderRadius: "16px",
+            borderRadius: "8px",
             border: "1px solid #333333",
             minHeight: 520,
             overflow: "hidden",

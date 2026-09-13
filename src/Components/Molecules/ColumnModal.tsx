@@ -9,7 +9,7 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import type { ProjectTab } from "../../service/TaskService";
+import { type ProjectTab, COLOR_PRESETS } from "../../service/TaskService";
 
 interface ColumnModalProps {
   open: boolean;
@@ -17,8 +17,6 @@ interface ColumnModalProps {
   onSaveColumn: (columnData: { id?: string; name: string; subtitle?: string; color?: string }) => void;
   editingColumn: ProjectTab | null;
 }
-
-const COLOR_PRESETS = ["#e44232", "#3b82f6", "#f59e0b", "#10b981", "#8b5cf6", "#ec4899", "#777777"];
 
 export const ColumnModal: React.FC<ColumnModalProps> = ({
   open,
@@ -67,14 +65,14 @@ export const ColumnModal: React.FC<ColumnModalProps> = ({
           sx: {
             backgroundColor: "#1c1c1c",
             color: "#ffffff",
-            borderRadius: "14px",
+            borderRadius: "8px",
             border: "1px solid #333333",
           },
         },
       }}
     >
       <form onSubmit={handleSubmit}>
-        <DialogTitle sx={{ fontWeight: 700 }}>
+        <DialogTitle sx={{ fontWeight: 700, fontSize: "1.1rem" }}>
           {editingColumn ? "Spalte bearbeiten" : "Neue Board-Spalte"}
         </DialogTitle>
 
@@ -91,7 +89,7 @@ export const ColumnModal: React.FC<ColumnModalProps> = ({
               "& .MuiOutlinedInput-root": {
                 color: "#ffffff",
                 backgroundColor: "#161616",
-                borderRadius: "8px",
+                borderRadius: "6px",
                 "& fieldset": { borderColor: "#333333" },
               },
             }}
@@ -107,32 +105,34 @@ export const ColumnModal: React.FC<ColumnModalProps> = ({
               "& .MuiOutlinedInput-root": {
                 color: "#ffffff",
                 backgroundColor: "#161616",
-                borderRadius: "8px",
+                borderRadius: "6px",
                 "& fieldset": { borderColor: "#333333" },
               },
             }}
           />
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
-            <Typography variant="caption" sx={{ color: "#888888" }}>
+          <Box>
+            <Typography variant="caption" sx={{ color: "#888888", display: "block", mb: 1 }}>
               Farbe:
             </Typography>
-            {COLOR_PRESETS.map((col) => (
-              <Box
-                key={col}
-                onClick={() => setColor(col)}
-                sx={{
-                  width: 22,
-                  height: 22,
-                  borderRadius: "50%",
-                  backgroundColor: col,
-                  cursor: "pointer",
-                  border: color === col ? "2px solid #ffffff" : "2px solid transparent",
-                  transform: color === col ? "scale(1.15)" : "scale(1)",
-                  transition: "all 0.15s ease",
-                }}
-              />
-            ))}
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              {COLOR_PRESETS.map((col) => (
+                <Box
+                  key={col}
+                  onClick={() => setColor(col)}
+                  sx={{
+                    width: 22,
+                    height: 22,
+                    borderRadius: "50%",
+                    backgroundColor: col,
+                    cursor: "pointer",
+                    border: color === col ? "2px solid #ffffff" : "2px solid transparent",
+                    transform: color === col ? "scale(1.15)" : "scale(1)",
+                    transition: "all 0.15s ease",
+                  }}
+                />
+              ))}
+            </Box>
           </Box>
         </DialogContent>
 
@@ -149,6 +149,7 @@ export const ColumnModal: React.FC<ColumnModalProps> = ({
               color: "#ffffff",
               fontWeight: 600,
               textTransform: "none",
+              borderRadius: "6px",
               "&:hover": { backgroundColor: "#d1453b" },
             }}
           >

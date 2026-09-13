@@ -86,7 +86,7 @@ export const LabelColumn: React.FC<LabelColumnProps> = ({
         display: "flex",
         flexDirection: "column",
         maxHeight: "calc(100vh - 160px)",
-        borderRadius: "12px",
+        borderRadius: "8px",
         p: 1,
         transition: "all 0.2s ease-in-out",
         backgroundColor: isDragOver ? "rgba(228, 66, 50, 0.08)" : "transparent",

@@ -44,7 +44,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       sx={{
         backgroundColor: "#222222",
         border: "1px solid #333333",
-        borderRadius: "12px",
+        borderRadius: "8px",
         px: 2,
         py: 1.5,
         mb: 1.5,

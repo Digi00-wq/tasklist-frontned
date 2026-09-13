@@ -56,6 +56,27 @@ export interface CreateProjectDTO {
   tabs?: ProjectTab[];
 }
 
+export const COLOR_PRESETS = [
+  "#e44232", // Todoist Red
+  "#db4035", // Coral Red
+  "#ff7043", // Orange
+  "#ff9800", // Amber
+  "#f59e0b", // Gold
+  "#afb42b", // Lime Green
+  "#299764", // Todoist Green
+  "#10b981", // Mint
+  "#009688", // Teal
+  "#0284c7", // Sky Blue
+  "#3b82f6", // Blue
+  "#6366f1", // Indigo
+  "#8b5cf6", // Purple
+  "#a855f7", // Light Violet
+  "#ec4899", // Pink
+  "#e91e63", // Magenta
+  "#808080", // Slate Gray
+  "#52525b", // Dark Slate
+];
+
 // Default tabs generator for projects that have no custom tabs configured
 export const getDefaultTabsForProject = (projectColor?: string): ProjectTab[] => [
   { id: "not_started", name: "Not begun", color: projectColor || "#e5484d", subtitle: "General ideas and tasks" },

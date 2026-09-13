@@ -43,151 +43,102 @@ export const LabelsPage: React.FC<LabelsPageProps> = ({
   }, [labels, tasks]);
 
   return (
-    <Box sx={{ flexGrow: 1, p: 4, height: "100vh", overflowY: "auto" }}>
-      {/* Header */}
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 3 }}>
-        <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800, color: "#ffffff", letterSpacing: "-0.02em" }}>
-            Labels & Tasks
-          </Typography>
-          <Typography variant="body2" sx={{ color: "#888888", mt: 0.5 }}>
-            Filter project tasks by label categories
-          </Typography>
+    <Box sx={{ flexGrow: 1, px: { xs: 2, sm: 4, md: 5 }, pb: 4, height: "calc(100vh - 140px)", overflowY: "auto" }}>
+      {/* Label Tabs Bar with Manage Labels button at end */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 2,
+          pb: 1,
+          mb: 3,
+          borderBottom: "1px solid #2a2a2a",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            alignItems: "center",
+            overflowX: "auto",
+            "&::-webkit-scrollbar": { height: 4 },
+            "&::-webkit-scrollbar-thumb": { backgroundColor: "#333333", borderRadius: 2 },
+          }}
+        >
+          {/* 'All Tasks' Tab */}
+          <Button
+            size="small"
+            onClick={() => setSelectedLabelId(null)}
+            sx={{
+              color: selectedLabelId === null ? "#ffffff" : "#888888",
+              backgroundColor: selectedLabelId === null ? "rgba(255, 255, 255, 0.08)" : "transparent",
+              border: "1px solid",
+              borderColor: selectedLabelId === null ? "#444444" : "#2e2e2e",
+              borderRadius: "6px",
+              textTransform: "none",
+              fontWeight: selectedLabelId === null ? 700 : 500,
+              fontSize: "0.85rem",
+              px: 1.5,
+              py: 0.5,
+              whiteSpace: "nowrap",
+              "&:hover": { color: "#ffffff", backgroundColor: "rgba(255, 255, 255, 0.08)" },
+            }}
+          >
+            All Tasks ({tasks.length})
+          </Button>
+
+          {/* Dynamic Label Tabs */}
+          {labels.map((lbl) => {
+            const isSelected = selectedLabelId === lbl.id;
+            const count = labelTaskCountsMap[lbl.id] || 0;
+            const color = lbl.color || "#e44232";
+
+            return (
+              <Button
+                key={lbl.id || lbl.name}
+                size="small"
+                startIcon={<TagIcon sx={{ color, fontSize: 16 }} />}
+                onClick={() => setSelectedLabelId(isSelected ? null : lbl.id)}
+                sx={{
+                  color: isSelected ? "#ffffff" : "#888888",
+                  backgroundColor: isSelected ? "rgba(255, 255, 255, 0.08)" : "transparent",
+                  border: "1px solid",
+                  borderColor: isSelected ? color : "#2e2e2e",
+                  borderRadius: "6px",
+                  textTransform: "none",
+                  fontWeight: isSelected ? 700 : 500,
+                  fontSize: "0.85rem",
+                  px: 1.5,
+                  py: 0.5,
+                  whiteSpace: "nowrap",
+                  "&:hover": { color: "#ffffff", backgroundColor: "rgba(255, 255, 255, 0.08)" },
+                }}
+              >
+                {lbl.name} ({count})
+              </Button>
+            );
+          })}
         </Box>
 
+        {/* Manage Labels button */}
         <Button
-          variant="outlined"
-          startIcon={<AddIcon />}
+          size="small"
+          startIcon={<AddIcon fontSize="small" />}
           onClick={onOpenManageLabels}
           sx={{
-            color: "#ffffff",
+            color: "#888888",
             borderColor: "#333333",
-            borderRadius: "8px",
+            borderRadius: "6px",
             textTransform: "none",
-            fontWeight: 600,
-            "&:hover": { borderColor: "#555555", backgroundColor: "rgba(255,255,255,0.05)" },
+            fontWeight: 500,
+            fontSize: "0.85rem",
+            whiteSpace: "nowrap",
+            "&:hover": { color: "#ffffff", backgroundColor: "rgba(255,255,255,0.05)" },
           }}
         >
           Manage Labels
         </Button>
-      </Box>
-
-      {/* Row of Label Tabs */}
-      <Box
-        sx={{
-          display: "flex",
-          gap: 1.5,
-          alignItems: "center",
-          overflowX: "auto",
-          pb: 1.5,
-          mb: 3,
-          borderBottom: "1px solid #2a2a2a",
-          "&::-webkit-scrollbar": { height: 4 },
-          "&::-webkit-scrollbar-thumb": { backgroundColor: "#333333", borderRadius: 2 },
-        }}
-      >
-        {/* 'All Tasks' Tab */}
-        <Box
-          onClick={() => setSelectedLabelId(null)}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            px: 2,
-            py: 1,
-            borderRadius: "10px",
-            border: "1px solid",
-            borderColor: selectedLabelId === null ? "#e44232" : "#333333",
-            backgroundColor: selectedLabelId === null ? "rgba(228, 66, 50, 0.15)" : "#1c1c1c",
-            color: selectedLabelId === null ? "#ffffff" : "#aaaaaa",
-            fontWeight: 700,
-            fontSize: "0.875rem",
-            cursor: "pointer",
-            transition: "all 0.15s ease",
-            whiteSpace: "nowrap",
-            "&:hover": {
-              borderColor: "#e44232",
-              color: "#ffffff",
-            },
-          }}
-        >
-          <span>All Tasks</span>
-          <Typography
-            variant="caption"
-            sx={{
-              px: 1,
-              py: 0.2,
-              borderRadius: "10px",
-              backgroundColor: selectedLabelId === null ? "#e44232" : "#2e2e2e",
-              color: "#ffffff",
-              fontWeight: 700,
-              fontSize: "0.75rem",
-            }}
-          >
-            {tasks.length}
-          </Typography>
-        </Box>
-
-        {/* Dynamic Label Tabs */}
-        {labels.map((lbl) => {
-          const isSelected = selectedLabelId === lbl.id;
-          const count = labelTaskCountsMap[lbl.id] || 0;
-          const color = lbl.color || "#e44232";
-
-          return (
-            <Box
-              key={lbl.id || lbl.name}
-              onClick={() => setSelectedLabelId(isSelected ? null : lbl.id)}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-                px: 2,
-                py: 1,
-                borderRadius: "10px",
-                border: `1px solid ${isSelected ? color : "#333333"}`,
-                backgroundColor: isSelected ? `${color}22` : "#1c1c1c",
-                color: isSelected ? "#ffffff" : "#aaaaaa",
-                fontWeight: 600,
-                fontSize: "0.875rem",
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-                whiteSpace: "nowrap",
-                "&:hover": {
-                  borderColor: color,
-                  color: "#ffffff",
-                },
-              }}
-            >
-              <TagIcon sx={{ color, fontSize: 16 }} />
-              <span>{lbl.name}</span>
-              <Typography
-                variant="caption"
-                sx={{
-                  px: 1,
-                  py: 0.2,
-                  borderRadius: "10px",
-                  backgroundColor: isSelected ? color : "#2e2e2e",
-                  color: "#ffffff",
-                  fontWeight: 700,
-                  fontSize: "0.75rem",
-                }}
-              >
-                {count}
-              </Typography>
-            </Box>
-          );
-        })}
-      </Box>
-
-      {/* Filtered Tasks Section Header */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-        <Typography variant="h6" sx={{ color: "#ffffff", fontWeight: 700 }}>
-          {selectedLabel ? `Tasks labeled with "${selectedLabel.name}"` : "All Labeled Tasks"}
-        </Typography>
-        <Typography variant="body2" sx={{ color: "#888888" }}>
-          ({filteredTasks.length})
-        </Typography>
       </Box>
 
       {/* Tasks List */}
@@ -195,15 +146,15 @@ export const LabelsPage: React.FC<LabelsPageProps> = ({
         {filteredTasks.length === 0 ? (
           <Box
             sx={{
-              p: 4,
+              p: 3,
               textAlign: "center",
               backgroundColor: "#1c1c1c",
-              border: "1px dashed #333333",
-              borderRadius: "12px",
+              border: "1px solid #2e2e2e",
+              borderRadius: "8px",
             }}
           >
             <Typography variant="body2" sx={{ color: "#888888" }}>
-              No tasks associated with this label yet.
+              No tasks found for this label.
             </Typography>
           </Box>
         ) : (

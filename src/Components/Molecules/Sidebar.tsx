@@ -19,7 +19,7 @@ import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { Project } from "../../service/TaskService";
+import { type Project, COLOR_PRESETS } from "../../service/TaskService";
 
 interface SidebarProps {
   projects: Project[];
@@ -33,14 +33,7 @@ interface SidebarProps {
   tasksCountMap: Record<number, number>;
 }
 
-const PROJECT_COLOR_PRESETS = [
-  "#e44232", // Todoist Red
-  "#3b82f6", // Blue
-  "#f59e0b", // Amber
-  "#10b981", // Green
-  "#8b5cf6", // Purple
-  "#ec4899", // Pink
-];
+
 
 export const Sidebar: React.FC<SidebarProps> = ({
   projects,
@@ -317,14 +310,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
             sx: {
               backgroundColor: "#1c1c1c",
               color: "#ffffff",
-              borderRadius: "14px",
+              borderRadius: "8px",
               border: "1px solid #333333",
             },
           },
         }}
       >
         <form onSubmit={handleCreateProjectSubmit}>
-          <DialogTitle sx={{ fontWeight: 700 }}>New Project</DialogTitle>
+          <DialogTitle sx={{ fontWeight: 700, fontSize: "1.1rem" }}>New Project</DialogTitle>
           <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
             <TextField
               autoFocus
@@ -338,32 +331,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 "& .MuiOutlinedInput-root": {
                   color: "#ffffff",
                   backgroundColor: "#161616",
-                  borderRadius: "8px",
+                  borderRadius: "6px",
                   "& fieldset": { borderColor: "#333333" },
                 },
               }}
             />
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography variant="caption" sx={{ color: "#888888" }}>
-                Color:
+            <Box>
+              <Typography variant="caption" sx={{ color: "#888888", display: "block", mb: 1 }}>
+                Color Palette:
               </Typography>
-              {PROJECT_COLOR_PRESETS.map((col) => (
-                <Box
-                  key={col}
-                  onClick={() => setNewProjectColor(col)}
-                  sx={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: "50%",
-                    backgroundColor: col,
-                    cursor: "pointer",
-                    border: newProjectColor === col ? "2px solid #ffffff" : "2px solid transparent",
-                    transform: newProjectColor === col ? "scale(1.15)" : "scale(1)",
-                    transition: "all 0.15s ease",
-                  }}
-                />
-              ))}
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                {COLOR_PRESETS.map((col) => (
+                  <Box
+                    key={col}
+                    onClick={() => setNewProjectColor(col)}
+                    sx={{
+                      width: 22,
+                      height: 22,
+                      borderRadius: "50%",
+                      backgroundColor: col,
+                      cursor: "pointer",
+                      border: newProjectColor === col ? "2px solid #ffffff" : "2px solid transparent",
+                      transform: newProjectColor === col ? "scale(1.15)" : "scale(1)",
+                      transition: "all 0.15s ease",
+                    }}
+                  />
+                ))}
+              </Box>
             </Box>
           </DialogContent>
           <DialogActions sx={{ p: 2 }}>
@@ -379,6 +374,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 color: "#ffffff",
                 fontWeight: 600,
                 textTransform: "none",
+                borderRadius: "6px",
                 "&:hover": { backgroundColor: "#d1453b" },
               }}
             >
@@ -399,14 +395,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
             sx: {
               backgroundColor: "#1c1c1c",
               color: "#ffffff",
-              borderRadius: "14px",
+              borderRadius: "8px",
               border: "1px solid #333333",
             },
           },
         }}
       >
         <form onSubmit={handleEditProjectSubmit}>
-          <DialogTitle sx={{ fontWeight: 700 }}>Projekt bearbeiten</DialogTitle>
+          <DialogTitle sx={{ fontWeight: 700, fontSize: "1.1rem" }}>Projekt bearbeiten</DialogTitle>
           <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
             <TextField
               autoFocus
@@ -420,32 +416,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 "& .MuiOutlinedInput-root": {
                   color: "#ffffff",
                   backgroundColor: "#161616",
-                  borderRadius: "8px",
+                  borderRadius: "6px",
                   "& fieldset": { borderColor: "#333333" },
                 },
               }}
             />
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography variant="caption" sx={{ color: "#888888" }}>
+            <Box>
+              <Typography variant="caption" sx={{ color: "#888888", display: "block", mb: 1 }}>
                 Farbe:
               </Typography>
-              {PROJECT_COLOR_PRESETS.map((col) => (
-                <Box
-                  key={col}
-                  onClick={() => setEditProjectColor(col)}
-                  sx={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: "50%",
-                    backgroundColor: col,
-                    cursor: "pointer",
-                    border: editProjectColor === col ? "2px solid #ffffff" : "2px solid transparent",
-                    transform: editProjectColor === col ? "scale(1.15)" : "scale(1)",
-                    transition: "all 0.15s ease",
-                  }}
-                />
-              ))}
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                {COLOR_PRESETS.map((col) => (
+                  <Box
+                    key={col}
+                    onClick={() => setEditProjectColor(col)}
+                    sx={{
+                      width: 22,
+                      height: 22,
+                      borderRadius: "50%",
+                      backgroundColor: col,
+                      cursor: "pointer",
+                      border: editProjectColor === col ? "2px solid #ffffff" : "2px solid transparent",
+                      transform: editProjectColor === col ? "scale(1.15)" : "scale(1)",
+                      transition: "all 0.15s ease",
+                    }}
+                  />
+                ))}
+              </Box>
             </Box>
           </DialogContent>
           <DialogActions sx={{ p: 2 }}>
@@ -461,6 +459,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 color: "#ffffff",
                 fontWeight: 600,
                 textTransform: "none",
+                borderRadius: "6px",
                 "&:hover": { backgroundColor: "#d1453b" },
               }}
             >

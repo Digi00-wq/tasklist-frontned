@@ -11,7 +11,7 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import type { Label } from "../../service/TaskService";
+import { type Label, COLOR_PRESETS } from "../../service/TaskService";
 
 interface LabelModalProps {
   open: boolean;
@@ -21,15 +21,6 @@ interface LabelModalProps {
   onDeleteLabel: (id: number) => void;
 }
 
-const PRESET_COLORS = [
-  "#94a3b8", // Cool Slate
-  "#71717a", // Zinc Slate
-  "#cbd5e1", // Silver Gray
-  "#3f3f46", // Dark Charcoal
-  "#a1a1aa", // Warm Neutral
-  "#e2e8f0", // Soft Light Gray
-];
-
 export const LabelModal: React.FC<LabelModalProps> = ({
   open,
   onClose,
@@ -38,7 +29,7 @@ export const LabelModal: React.FC<LabelModalProps> = ({
   onDeleteLabel,
 }) => {
   const [name, setName] = useState("");
-  const [color, setColor] = useState("#94a3b8");
+  const [color, setColor] = useState("#e44232");
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,15 +47,15 @@ export const LabelModal: React.FC<LabelModalProps> = ({
       slotProps={{
         paper: {
           sx: {
-            backgroundColor: "#16161a",
-            color: "#f3f3f5",
-            borderRadius: "16px",
-            border: "2px solid #3f3f4c",
+            backgroundColor: "#1c1c1c",
+            color: "#ffffff",
+            borderRadius: "8px",
+            border: "1px solid #333333",
           },
         },
       }}
     >
-      <DialogTitle sx={{ fontWeight: 700, fontFamily: "monospace, sans-serif" }}>
+      <DialogTitle sx={{ fontWeight: 700, fontSize: "1.1rem" }}>
         Labels verwalten
       </DialogTitle>
 
@@ -79,49 +70,49 @@ export const LabelModal: React.FC<LabelModalProps> = ({
               fullWidth
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  color: "#f3f3f5",
-                  backgroundColor: "#0f0f12",
-                  borderRadius: "10px",
-                  "& fieldset": { borderColor: "#2a2a33" },
-                  "&:hover fieldset": { borderColor: "#3f3f4c" },
-                  "&.Mui-focused fieldset": { borderColor: "#717182" },
+                  color: "#ffffff",
+                  backgroundColor: "#161616",
+                  borderRadius: "6px",
+                  "& fieldset": { borderColor: "#333333" },
                 },
               }}
             />
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography variant="caption" sx={{ color: "#8e8e9e" }}>
+            <Box>
+              <Typography variant="caption" sx={{ color: "#888888", display: "block", mb: 1 }}>
                 Farbe:
               </Typography>
-              {PRESET_COLORS.map((c) => (
-                <Box
-                  key={c}
-                  onClick={() => setColor(c)}
-                  sx={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: "50%",
-                    border: color === c ? "2px solid #f3f3f5" : "2px solid transparent",
-                    backgroundColor: c,
-                    cursor: "pointer",
-                    transform: color === c ? "scale(1.15)" : "scale(1)",
-                    transition: "all 0.15s ease",
-                  }}
-                />
-              ))}
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                {COLOR_PRESETS.map((c) => (
+                  <Box
+                    key={c}
+                    onClick={() => setColor(c)}
+                    sx={{
+                      width: 22,
+                      height: 22,
+                      borderRadius: "50%",
+                      border: color === c ? "2px solid #ffffff" : "2px solid transparent",
+                      backgroundColor: c,
+                      cursor: "pointer",
+                      transform: color === c ? "scale(1.15)" : "scale(1)",
+                      transition: "all 0.15s ease",
+                    }}
+                  />
+                ))}
+              </Box>
             </Box>
 
             <Button
               type="submit"
-              variant="outlined"
+              variant="contained"
               disabled={!name.trim()}
               sx={{
-                color: "#f3f3f5",
-                borderColor: "#3f3f4c",
-                borderRadius: "8px",
+                backgroundColor: "#e44232",
+                color: "#ffffff",
+                borderRadius: "6px",
                 textTransform: "none",
                 fontWeight: 600,
-                "&:hover": { borderColor: "#717182", backgroundColor: "rgba(255, 255, 255, 0.04)" },
+                "&:hover": { backgroundColor: "#d1453b" },
               }}
             >
               Label hinzufügen
@@ -129,7 +120,7 @@ export const LabelModal: React.FC<LabelModalProps> = ({
           </Box>
         </form>
 
-        <Typography variant="caption" sx={{ color: "#8e8e9e", fontWeight: 700, mt: 1 }}>
+        <Typography variant="caption" sx={{ color: "#888888", fontWeight: 700, mt: 1 }}>
           Bestehende Labels ({labels.length})
         </Typography>
 
@@ -143,18 +134,18 @@ export const LabelModal: React.FC<LabelModalProps> = ({
                 justifyContent: "space-between",
                 px: 1.5,
                 py: 0.8,
-                borderRadius: "8px",
-                border: `2px solid ${lbl.color || "#717182"}`,
-                backgroundColor: "#0f0f12",
+                borderRadius: "6px",
+                border: `1px solid ${lbl.color || "#444444"}`,
+                backgroundColor: "#161616",
               }}
             >
-              <Typography variant="body2" sx={{ color: lbl.color || "#717182", fontWeight: 700 }}>
+              <Typography variant="body2" sx={{ color: lbl.color || "#d0d0d0", fontWeight: 600 }}>
                 {lbl.name}
               </Typography>
               <IconButton
                 size="small"
                 onClick={() => lbl.id && onDeleteLabel(lbl.id)}
-                sx={{ color: "#8e8e9e", p: 0.2, "&:hover": { color: "#ef4444" } }}
+                sx={{ color: "#888888", p: 0.2, "&:hover": { color: "#ef4444" } }}
               >
                 <DeleteOutlinedIcon sx={{ fontSize: 16 }} />
               </IconButton>
@@ -164,7 +155,7 @@ export const LabelModal: React.FC<LabelModalProps> = ({
       </DialogContent>
 
       <DialogActions sx={{ p: 2 }}>
-        <Button onClick={onClose} sx={{ color: "#8e8e9e", textTransform: "none" }}>
+        <Button onClick={onClose} sx={{ color: "#888888", textTransform: "none" }}>
           Schliessen
         </Button>
       </DialogActions>
