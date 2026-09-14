@@ -5,10 +5,18 @@ import type {
 } from "axios";
 import axios from "axios";
 
-const DEFAULT_BASE_URL = "https://task-list.ch/api/";
+const DEFAULT_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api/";
 
 export const getBaseUrl = (): string => {
-  return localStorage.getItem("API_BASE_URL") || DEFAULT_BASE_URL;
+  const storedUrl = localStorage.getItem("API_BASE_URL");
+  if (
+    storedUrl === "https://task-list.ch/api/" ||
+    storedUrl === "http://192.168.1.169:8080/api/"
+  ) {
+    localStorage.removeItem("API_BASE_URL");
+    return DEFAULT_BASE_URL;
+  }
+  return storedUrl || DEFAULT_BASE_URL;
 };
 
 export const setBaseUrl = (url: string) => {
@@ -23,6 +31,7 @@ export const setBaseUrl = (url: string) => {
 export const TaskApi: AxiosInstance = axios.create({
   baseURL: getBaseUrl(),
   timeout: 5000,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -33,6 +42,7 @@ const security = false;
 TaskApi.interceptors.request.use(
   (config: InternalAxiosRequestConfig<any>) => {
     config.baseURL = getBaseUrl();
+    config.withCredentials = true;
     if (!security) {
       return config;
     }

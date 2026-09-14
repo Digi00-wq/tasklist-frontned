@@ -14,6 +14,7 @@ import GlobalSearchPage from "./GlobalSearchPage";
 import TodayPage from "./TodayPage";
 import LabelsPage from "./LabelsPage";
 
+import { getBaseUrl } from "../../service/Api";
 import {
   TaskService,
   getDefaultTabsForProject,
@@ -100,7 +101,7 @@ export const TasklistPage: React.FC = () => {
     } catch (err: any) {
       console.warn("Backend connection failed:", err);
       setIsBackendConnected(false);
-      setError("Keine Verbindung zum Spring Boot Backend (http://192.168.1.169:8080/api/).");
+      setError(`Keine Verbindung zum Backend (${getBaseUrl()}).`);
     } finally {
       setLoading(false);
     }
