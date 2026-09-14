@@ -5,7 +5,7 @@ import type {
 } from "axios";
 import axios from "axios";
 
-const DEFAULT_BASE_URL = "https://api.task-list.ch/api/";
+const DEFAULT_BASE_URL = "https://task-list.ch/api/";
 
 export const getBaseUrl = (): string => {
   return localStorage.getItem("API_BASE_URL") || DEFAULT_BASE_URL;
